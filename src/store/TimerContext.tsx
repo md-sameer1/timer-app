@@ -90,9 +90,8 @@ function timerReducer(state: TimerState, action: Action): TimerState {
         return timer;
       });
 
-      // Find any timer that just completed this tick (i.e. went from running to completed)
       const justCompleted = state.timers.find(
-        (timer, i) => timer.status === "running" && timer.remaining === 1 // about to hit 0
+        (timer, i) => timer.status === "running" && timer.remaining === 1
       );
 
       return {
@@ -164,7 +163,6 @@ export const TimerContext = createContext<TimerContextProps>({
 export const TimerProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(timerReducer, initialState);
 
-  // Global tick: dispatch a 'TICK' action every second
   useEffect(() => {
     const interval = setInterval(() => {
       dispatch({ type: "TICK" });

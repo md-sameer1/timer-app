@@ -1,4 +1,3 @@
-// src/screens/HistoryScreen.tsx
 import React, { useContext } from "react";
 import { View, Text, FlatList, StyleSheet } from "react-native";
 import { TimerContext, CompletedTimer } from "../store/TimerContext";

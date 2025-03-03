@@ -1,9 +1,8 @@
-// src/components/ProgressBar.tsx
 import React from "react";
 import { View, StyleSheet } from "react-native";
 
 interface ProgressBarProps {
-  progress: number; // Value between 0 and 1
+  progress: number;
 }
 
 const ProgressBar: React.FC<ProgressBarProps> = ({ progress }) => {

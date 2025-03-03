@@ -1,4 +1,3 @@
-// src/screens/AddTimerScreen.tsx
 import React, { useState, useContext } from "react";
 import { View, Text, TextInput, Button, StyleSheet, Alert } from "react-native";
 import { Timer, TimerContext } from "../store/TimerContext";
