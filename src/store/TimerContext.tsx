@@ -1,5 +1,5 @@
 import React, { createContext, useReducer, useEffect, ReactNode } from "react";
-
+import AsyncStorage from "@react-native-async-storage/async-storage";
 export type TimerStatus = "running" | "paused" | "completed";
 
 export interface Timer {
@@ -160,8 +160,61 @@ export const TimerContext = createContext<TimerContextProps>({
   dispatch: () => null,
 });
 
+const STORAGE_KEYS = {
+  TIMERS: "@MyTimer:timers",
+  HISTORY: "@MyTimer:history",
+};
+
 export const TimerProvider = ({ children }: { children: ReactNode }) => {
   const [state, dispatch] = useReducer(timerReducer, initialState);
+
+  useEffect(() => {
+    const loadStoredData = async () => {
+      try {
+        const [storedTimers, storedHistory] = await Promise.all([
+          AsyncStorage.getItem(STORAGE_KEYS.TIMERS),
+          AsyncStorage.getItem(STORAGE_KEYS.HISTORY),
+        ]);
+
+        if (storedTimers) {
+          const timers = JSON.parse(storedTimers);
+          timers.forEach((timer: Timer) => {
+            dispatch({ type: "ADD_TIMER", payload: timer });
+          });
+        }
+
+        if (storedHistory) {
+          const history = JSON.parse(storedHistory);
+          initialState.history = history;
+        }
+      } catch (error) {
+        console.error("Error loading data from AsyncStorage:", error);
+      }
+    };
+
+    loadStoredData();
+  }, []);
+
+  useEffect(() => {
+    const saveData = async () => {
+      try {
+        await Promise.all([
+          AsyncStorage.setItem(
+            STORAGE_KEYS.TIMERS,
+            JSON.stringify(state.timers)
+          ),
+          AsyncStorage.setItem(
+            STORAGE_KEYS.HISTORY,
+            JSON.stringify(state.history)
+          ),
+        ]);
+      } catch (error) {
+        console.error("Error saving data to AsyncStorage:", error);
+      }
+    };
+
+    saveData();
+  }, [state.timers, state.history]);
 
   useEffect(() => {
     const interval = setInterval(() => {
